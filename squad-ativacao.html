@@ -299,7 +299,7 @@ async function changeQ(q) {
 (async () => {
   try { render(await load(currentQ)); }
   catch(err) {
-    document.getElementById('app').innerHTML = '<div class="error-box">Erro ao carregar dados: '+err.message+'<br><small>Verifique se o fluxo Power Automate está ativo.</small></div>';
+    document.getElementById('app').innerHTML = '<div class="error-box">Erro ao carregar dados: '+err.message+'<br><small>Verifique se o webhook N8N está ativo: '+PROXY+'</small></div>';
     document.getElementById('sync-dot').style.background = '#E24B4A';
     document.getElementById('sync-txt').textContent = 'Erro de conexão';
   }
