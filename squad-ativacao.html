@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squad Ativação — QUAL</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f3; padding-bottom: 2rem; }
+  .topbar { background: #fff; border-bottom: 1px solid #e5e5e0; padding: 0 1.5rem; height: 44px; display: flex; align-items: center; gap: .75rem; }
+  .sp-logo { font-size: 12px; font-weight: 600; color: #185FA5; display: flex; align-items: center; gap: 5px; }
+  .sp-dot { width: 8px; height: 8px; border-radius: 50%; background: #185FA5; }
+  .bc { font-size: 11px; color: #999; }
+  .bc strong { color: #333; }
+  .sync { margin-left: auto; font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 5px; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #EF9F27; }
+  .hero { background: #fff; border-bottom: 1px solid #e5e5e0; padding: 1.25rem 1.5rem 1rem; }
+  .hero h1 { font-size: 20px; font-weight: 600; color: #1a1a18; margin-bottom: 3px; }
+  .hero-sub { font-size: 12px; color: #777; }
+  .hero-tags { display: flex; gap: 7px; margin-top: .625rem; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+  .pill-blue { background: #E6F1FB; color: #0C447C; }
+  .pill-green { background: #EAF3DE; color: #3B6D11; }
+  .pill-red { background: #FCEBEB; color: #A32D2D; }
+  .pill-amber { background: #FAEEDA; color: #854F0B; }
+  .pill-gray { background: #F1EFE8; color: #5F5E5A; }
+  .qbar { background: #fff; border-bottom: 2px solid #378ADD; padding: .875rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .qbar-label { font-size: 12px; font-weight: 600; color: #555; display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+  .qi { background: #E6F1FB; color: #185FA5; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .qbtns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .qbtn { font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; border: 1px solid #ccc; background: transparent; color: #555; cursor: pointer; transition: all .15s; }
+  .qbtn:hover { background: #f5f5f3; }
+  .qbtn.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+  .body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  .slabel { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #aaa; margin-bottom: .625rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .jbadge { font-size: 10px; font-weight: 600; background: #E6F1FB; color: #0C447C; padding: 1px 7px; border-radius: 20px; letter-spacing: 0; text-transform: none; }
+  .rbadge { font-size: 10px; font-weight: 600; background: #EAF3DE; color: #3B6D11; padding: 1px 7px; border-radius: 20px; letter-spacing: 0; text-transform: none; }
+  .krow { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .kpi { background: #f0efea; border-radius: 8px; padding: .75rem .875rem; }
+  .kpi.hi { background: #E6F1FB; }
+  .kpi.warn { background: #FCEBEB; }
+  .kval { font-size: 22px; font-weight: 600; color: #1a1a18; }
+  .kpi.hi .kval { color: #0C447C; }
+  .kpi.warn .kval { color: #A32D2D; }
+  .klbl { font-size: 11px; color: #777; margin-top: 2px; }
+  .card { background: #fff; border: 1px solid #e5e5e0; border-radius: 12px; padding: .875rem 1rem; }
+  .two { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .two { grid-template-columns: 1fr; } }
+  .epics { display: flex; flex-direction: column; gap: 7px; }
+  .erow { background: #f5f5f3; border-radius: 8px; padding: .625rem .75rem; text-decoration: none; display: block; }
+  .erow:hover { background: #eeeee9; }
+  .erow.match { background: #E6F1FB; border: 1px solid #B5D4F4; }
+  .etop { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 5px; }
+  .ekey { font-size: 10px; font-family: monospace; color: #aaa; min-width: 68px; flex-shrink: 0; padding-top: 1px; }
+  .erow.match .ekey { color: #185FA5; }
+  .etitle { font-size: 12px; font-weight: 600; color: #1a1a18; flex: 1; line-height: 1.35; }
+  .qtag { font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 9px; background: #E6F1FB; color: #185FA5; border: 1px solid #B5D4F4; white-space: nowrap; flex-shrink: 0; }
+  .spill { font-size: 9px; font-weight: 600; padding: 1px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+  .eprog { display: flex; align-items: center; gap: 7px; padding-left: 75px; }
+  .pbg { flex: 1; height: 4px; background: rgba(0,0,0,.1); border-radius: 2px; overflow: hidden; }
+  .pf { height: 100%; border-radius: 2px; }
+  .ppct { font-size: 10px; color: #aaa; min-width: 28px; text-align: right; }
+  .side-cards { display: flex; flex-direction: column; gap: .875rem; }
+  .side-item { background: #f5f5f3; border-radius: 0 8px 8px 0; padding: .5rem .75rem; display: block; text-decoration: none; margin-bottom: 6px; }
+  .side-item:hover { background: #eeeee9; }
+  .side-title { font-size: 12px; font-weight: 600; color: #1a1a18; }
+  .side-meta { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .board-cols { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 900px) { .board-cols { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .board-cols { grid-template-columns: repeat(2, 1fr); } }
+  .bchead { font-size: 11px; font-weight: 600; color: #777; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .bcc { font-size: 10px; background: #f0efea; border-radius: 9px; padding: 1px 5px; color: #aaa; }
+  .bcard { background: #f5f5f3; border-radius: 8px; padding: .5rem .625rem; margin-bottom: 5px; text-decoration: none; display: block; }
+  .bcard:hover { background: #eeeee9; }
+  .bcard.bl { border-left: 2px solid #E24B4A; border-radius: 0 8px 8px 0; }
+  .bcard.ip { border-left: 2px solid #378ADD; border-radius: 0 8px 8px 0; }
+  .bcard.rv { border-left: 2px solid #EF9F27; border-radius: 0 8px 8px 0; }
+  .bcard.dp { border-left: 2px solid #7F77DD; border-radius: 0 8px 8px 0; }
+  .bcard.rd { border-left: 2px solid #888780; border-radius: 0 8px 8px 0; }
+  .bctit { font-size: 11px; font-weight: 600; color: #1a1a18; line-height: 1.35; margin-bottom: 4px; }
+  .bcft { display: flex; align-items: center; gap: 5px; }
+  .btag { font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 9px; }
+  .bug-t { background: #FCEBEB; color: #A32D2D; }
+  .task-t { background: #E6F1FB; color: #185FA5; }
+  .epic-t { background: #EEEDFE; color: #3C3489; }
+  .bav { margin-left: auto; width: 18px; height: 18px; border-radius: 50%; background: #EEEDFE; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #3C3489; flex-shrink: 0; }
+  .divider { height: 1px; background: #e5e5e0; }
+  .alert-box { background: #FAEEDA; border: 1px solid #FAC775; border-radius: 8px; padding: .625rem .875rem; margin-bottom: .875rem; }
+  .alert-title { font-size: 11px; font-weight: 600; color: #854F0B; margin-bottom: 4px; }
+  .alert-item { font-size: 11px; color: #633806; display: flex; align-items: flex-start; gap: 5px; margin-top: 2px; }
+  .rx-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 700px) { .rx-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .rx-grid { grid-template-columns: 1fr; } }
+  .rx-card { background: #fff; border-radius: 10px; padding: .875rem 1rem; }
+  .rx-card.g { border: 1px solid #C0DD97; }
+  .rx-card.a { border: 1px solid #FAC775; }
+  .rx-card.r { border: 1px solid #F7C1C1; }
+  .rx-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #aaa; margin-bottom: 6px; }
+  .rx-val { font-size: 20px; font-weight: 600; margin-bottom: 5px; }
+  .rx-val.g { color: #3B6D11; }
+  .rx-val.a { color: #854F0B; }
+  .rx-val.r { color: #A32D2D; }
+  .rx-details { display: flex; flex-direction: column; gap: 2px; margin-bottom: 7px; }
+  .rx-detail { font-size: 11px; color: #777; }
+  .rx-insight { border-radius: 6px; padding: 5px 8px; font-size: 11px; line-height: 1.4; }
+  .rx-insight.g { background: #EAF3DE; color: #3B6D11; }
+  .rx-insight.a { background: #FAEEDA; color: #854F0B; }
+  .rx-insight.r { background: #FCEBEB; color: #A32D2D; }
+  .rx-src { font-size: 10px; color: #bbb; text-align: right; margin-top: 8px; }
+  .ftbar { display: flex; align-items: center; justify-content: space-between; padding: .625rem 1.5rem; background: #fff; border-top: 1px solid #e5e5e0; margin-top: .5rem; font-size: 10px; color: #aaa; flex-wrap: wrap; gap: 8px; }
+  .ftbar a { color: #185FA5; text-decoration: none; }
+  .loading { text-align: center; padding: 4rem 2rem; color: #aaa; font-size: 14px; }
+  .loading-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #185FA5; animation: pulse 1.2s ease-in-out infinite; margin: 0 3px; }
+  .loading-dot:nth-child(2) { animation-delay: .2s; }
+  .loading-dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1)} }
+  .error-box { background: #FCEBEB; color: #A32D2D; padding: 1rem 1.5rem; border-radius: 8px; margin: 1rem 1.5rem; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="sp-logo"><div class="sp-dot"></div>SharePoint</div>
+  <span class="bc">Tecnologia / Engenharia / <strong>Squad Ativação</strong></span>
+  <div class="sync"><div class="sync-dot" id="sync-dot"></div><span id="sync-txt">Carregando...</span></div>
+</div>
+
+<div id="app">
+  <div class="loading">
+    <div style="margin-bottom:1rem">
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+    </div>
+    Buscando dados do Jira...
+  </div>
+</div>
+
+<script>
+const PROXY = 'https://default845ee1178706450eb29c72847ccab5.07.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/42476e0c08e24dfeae2a9a7e82614625/triggers/manual/paths/invoke?api-version=1';
+const JIRA  = 'https://motoristapx.atlassian.net';
+let currentQ = 'Q1-2026';
+
+const sc = { done:{bg:'#EAF3DE',tx:'#3B6D11'}, inprogress:{bg:'#E6F1FB',tx:'#185FA5'}, totest:{bg:'#FAEEDA',tx:'#854F0B'}, review:{bg:'#FAEEDA',tx:'#854F0B'}, deploy:{bg:'#EEEDFE',tx:'#3C3489'}, blocked:{bg:'#FCEBEB',tx:'#A32D2D'}, readytodev:{bg:'#F1EFE8',tx:'#5F5E5A'}, backlog:{bg:'#F1EFE8',tx:'#5F5E5A'}, kickoff:{bg:'#E1F5EE',tx:'#0F6E56'}, depriorized:{bg:'#F1EFE8',tx:'#888780'}, other:{bg:'#F1EFE8',tx:'#888780'} };
+const pw = s => s==='done'?'100%':s==='inprogress'?'55%':s==='kickoff'?'10%':'0%';
+const pc = s => s==='done'?'#639922':s==='inprogress'?'#378ADD':'#888780';
+const ini = n => n?n.split(/[\s.]+/).slice(0,2).map(p=>p[0]?.toUpperCase()||'').join(''):'?';
+const sh = (s,n=55) => s.replace(/^\[.*?\]\s*[-–]?\s*/,'').substring(0,n)+(s.length>n?'…':'');
+const e = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+const cols = [
+  {key:'readytodev',label:'Ready to dev',accent:'#888780',cls:'rd'},
+  {key:'inprogress',label:'Em andamento',accent:'#378ADD',cls:'ip'},
+  {key:'totest',label:'TO TEST',accent:'#EF9F27',cls:'rv'},
+  {key:'review',label:'Code Review',accent:'#7F77DD',cls:'dp'},
+  {key:'blocked',label:'Blocked',accent:'#E24B4A',cls:'bl'},
+];
+
+async function load(q) {
+  const url = PROXY + (q && q!=='all' ? '&quarter=' + encodeURIComponent(q) : '');
+  const r = await fetch(url, {method:'GET'});
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+function renderEpics(epics) {
+  if (!epics.length) return '<div style="font-size:12px;color:#aaa">Nenhum épico para este filtro.</div>';
+  return epics.map(ep => {
+    const s = sc[ep.status]||sc.other;
+    return '<a href="'+e(ep.jiraUrl)+'" target="_blank" class="erow'+(ep.quarter?' match':'')+'">'+
+      '<div class="etop">'+
+        '<span class="ekey">'+e(ep.key)+'</span>'+
+        '<span class="etitle">'+e(ep.summary)+'</span>'+
+        (ep.quarter?'<span class="qtag">'+e(ep.quarter)+'</span>':'')+
+        '<span class="spill" style="background:'+s.bg+';color:'+s.tx+'">'+e(ep.statusName)+'</span>'+
+      '</div>'+
+      '<div class="eprog"><div class="pbg"><div class="pf" style="width:'+pw(ep.status)+';background:'+pc(ep.status)+'"></div></div><span class="ppct">'+pw(ep.status)+'</span></div>'+
+    '</a>';
+  }).join('');
+}
+
+function renderSide(board, status, accent, title) {
+  const items = board.filter(i=>i.status===status);
+  const rows = items.length ? items.map(i=>
+    '<a href="'+e(i.jiraUrl)+'" target="_blank" class="side-item" style="border-left:2px solid '+accent+'">'+
+      '<div class="side-title">'+e(sh(i.summary,52))+'</div>'+
+      '<div class="side-meta">'+e(i.key)+' · '+e(i.assignee||'—')+' · '+e(i.priority||'')+'</div>'+
+    '</a>').join('') : '<span style="font-size:12px;color:#aaa">Nenhum item</span>';
+  return '<div class="card"><div class="slabel">'+title+' <span class="jbadge">'+items.length+' issues</span></div>'+rows+'</div>';
+}
+
+function renderBoard(board) {
+  return cols.map(col=>{
+    const items = board.filter(i=>i.status===col.key);
+    return '<div>'+
+      '<div class="bchead" style="color:'+col.accent+'">'+col.label+' <span class="bcc">'+items.length+'</span></div>'+
+      items.map(i=>{
+        const t = i.type==='Bug'?'bug-t':i.type==='Epic'?'epic-t':'task-t';
+        return '<a href="'+e(i.jiraUrl)+'" target="_blank" class="bcard '+col.cls+'">'+
+          '<div class="bctit">'+e(sh(i.summary))+'</div>'+
+          '<div class="bcft"><span class="btag '+t+'">'+e(i.type)+'</span><span class="bav">'+e(ini(i.assignee))+'</span></div>'+
+        '</a>';
+      }).join('')+
+    '</div>';
+  }).join('');
+}
+
+function renderRaiox(rx) {
+  if (!rx) return '';
+  const alerts = (rx.alerts||[]).map(a=>'<div class="alert-item"><span>›</span><span>'+e(a)+'</span></div>').join('');
+  const alertBox = alerts ? '<div class="alert-box"><div class="alert-title">Pontos de atenção · '+e(rx.date)+'</div>'+alerts+'</div>' : '';
+  const metrics = Object.values(rx.metrics||{}).map(m=>{
+    if (!m) return '';
+    const c = m.color||'a';
+    const trend = m.trend==='down'?'↓':m.trend==='up'?'↑':'';
+    return '<div class="rx-card '+c+'">'+
+      '<div class="rx-label">'+e(m.label)+'</div>'+
+      '<div class="rx-val '+c+'">'+e(m.value)+(trend?' <span style="font-size:14px">'+trend+'</span>':'')+'</div>'+
+      '<div class="rx-details">'+((m.details||[]).map(d=>'<div class="rx-detail">'+e(d)+'</div>').join(''))+'</div>'+
+      '<div class="rx-insight '+c+'">'+e(m.insight)+'</div>'+
+    '</div>';
+  }).join('');
+  return '<div class="divider" style="margin:1.25rem 0"></div>'+
+    '<div>'+
+      '<div class="slabel">Raio-PX — Gestão do Time <span class="jbadge">via Jira · últimas 8 semanas</span> <span class="rbadge">'+e(rx.date)+'</span></div>'+
+      alertBox+
+      '<div class="rx-grid">'+metrics+'</div>'+
+      '<div class="rx-src">Calculado via Jira REST API · replica lógica Raio-PX · '+e(rx.reference)+'</div>'+
+    '</div>';
+}
+
+function render(d) {
+  const quarters = ['all', ...(d.quarters||[])];
+  const qbtns = quarters.map(q=>'<button class="qbtn'+(q===currentQ?' active':'')+('"')+' onclick="changeQ(\''+q+'\')">'+(q==='all'?'Todos':q)+'</button>').join('');
+  document.getElementById('app').innerHTML =
+    '<div class="hero">'+
+      '<h1>Squad Ativação — QUAL</h1>'+
+      '<div class="hero-sub">motoristapx.atlassian.net · Power Automate + N8N + Jira · Raio-PX via Jira</div>'+
+      '<div class="hero-tags">'+
+        '<span class="pill pill-blue">Projeto QUAL</span>'+
+        '<span class="pill pill-green">'+d.kpis.epicsTotal+' épicos</span>'+
+        '<span class="pill pill-red">'+d.kpis.blocked+' bloqueados</span>'+
+        '<span class="pill pill-amber">'+(d.raiox?.metrics?.alocacao?.value||'')+' alocação</span>'+
+        '<span class="pill pill-gray">'+(currentQ==='all'?'Todos os quarters':currentQ)+'</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="qbar">'+
+      '<div class="qbar-label"><span class="qi">Q</span>Filtrar por Quarter</div>'+
+      '<div class="qbtns">'+qbtns+'</div>'+
+    '</div>'+
+    '<div class="body">'+
+      '<div>'+
+        '<div class="slabel">Visão geral <span class="jbadge">Jira · QUAL</span></div>'+
+        '<div class="krow">'+
+          '<div class="kpi hi"><div class="kval">'+d.kpis.epicsTotal+'</div><div class="klbl">Épicos</div></div>'+
+          '<div class="kpi"><div class="kval">'+d.kpis.totalActive+'</div><div class="klbl">Issues ativas</div></div>'+
+          '<div class="kpi warn"><div class="kval">'+d.kpis.blocked+'</div><div class="klbl">Blocked</div></div>'+
+          '<div class="kpi"><div class="kval">'+d.kpis.inprogress+'</div><div class="klbl">Em andamento</div></div>'+
+          '<div class="kpi"><div class="kval">'+d.kpis.totest+'</div><div class="klbl">TO TEST</div></div>'+
+          '<div class="kpi"><div class="kval">'+d.kpis.waitingDeploy+'</div><div class="klbl">Waiting Deploy</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="two">'+
+        '<div class="card">'+
+          '<div class="slabel">Épicos <span class="jbadge">issuetype=Epic · "Quarter"</span> <span class="rbadge">'+(currentQ==='all'?'Todos':currentQ)+'</span></div>'+
+          '<div class="epics">'+renderEpics(d.epics||[])+'</div>'+
+        '</div>'+
+        '<div class="side-cards">'+
+          renderSide(d.board||[],'blocked','#E24B4A','Bloqueados')+
+          renderSide(d.board||[],'deploy','#7F77DD','Waiting Deploy')+
+        '</div>'+
+      '</div>'+
+      '<div>'+
+        '<div class="slabel">Board ativo <span class="jbadge">statusCategory != Done</span></div>'+
+        '<div class="card" style="padding:.875rem"><div class="board-cols">'+renderBoard(d.board||[])+'</div></div>'+
+      '</div>'+
+      renderRaiox(d.raiox)+
+    '</div>'+
+    '<div class="ftbar">'+
+      '<span>'+JIRA+' · QUAL · Power Automate + N8N</span>'+
+      '<span>'+new Date(d.generatedAt).toLocaleString('pt-BR')+'</span>'+
+      '<a href="'+JIRA+'/jira/software/projects/QUAL/boards" target="_blank">Abrir no Jira →</a>'+
+    '</div>';
+
+  document.getElementById('sync-dot').style.background = '#639922';
+  document.getElementById('sync-txt').textContent = 'Jira QUAL · ao vivo';
+}
+
+async function changeQ(q) {
+  currentQ = q;
+  document.getElementById('sync-dot').style.background = '#EF9F27';
+  document.getElementById('sync-txt').textContent = 'Atualizando...';
+  try { render(await load(q)); } catch(err) {
+    document.getElementById('sync-dot').style.background = '#E24B4A';
+    document.getElementById('sync-txt').textContent = 'Erro ao carregar';
+  }
+}
+
+(async () => {
+  try { render(await load(currentQ)); }
+  catch(err) {
+    document.getElementById('app').innerHTML = '<div class="error-box">Erro ao carregar dados: '+err.message+'<br><small>Verifique se o fluxo Power Automate está ativo.</small></div>';
+    document.getElementById('sync-dot').style.background = '#E24B4A';
+    document.getElementById('sync-txt').textContent = 'Erro de conexão';
+  }
+})();
+</script>
+</body>
+</html>
