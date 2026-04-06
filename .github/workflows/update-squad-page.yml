@@ -1,9 +1,10 @@
 name: Atualizar Squad Page
 
 on:
-  repository_dispatch:
-    types: [update-squad-page]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update:
@@ -12,35 +13,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CLAUDE }}
 
-      - name: Decodificar HTML do payload
-        run: |
-          HTML_B64="${{ github.event.client_payload.html_base64 }}"
-          if [ -z "$HTML_B64" ]; then
-            echo "ERRO: payload html_base64 vazio"
-            exit 1
-          fi
-          echo "$HTML_B64" | base64 -d > index.html
-          BYTES=$(wc -c < index.html)
-          echo "Recebidos $BYTES bytes"
-          if [ "$BYTES" -lt 5000 ]; then
-            echo "ERRO: arquivo parece invalido"
-            exit 1
-          fi
-
-      - name: Commit e push
+      - name: Atualizar timestamp e publicar
         run: |
           git config user.name "Claude Bot"
           git config user.email "claude-bot@motoristapx.com"
+
+          TIMESTAMP=$(date '+%d/%m/%Y %H:%M')
+
+          sed -i "s|Sincronizado via MCP em [^<·]*|Sincronizado via MCP em ${TIMESTAMP} |g" index.html
+
           git add index.html
+
           if git diff --staged --quiet; then
-            echo "Sem mudancas."
+            git commit --allow-empty -m "Squad AQ rebuild - ${TIMESTAMP} [Claude MCP]"
           else
-            git commit -m "Squad AQ sync - ${{ github.event.client_payload.sync_time }} [Claude MCP]"
-            git push
-            echo "Publicado!"
+            git commit -m "Squad AQ sync - ${TIMESTAMP} [Claude MCP]"
           fi
 
-      - name: URL final
-        run: echo "https://fabriciognascimento.github.io/Squad/"
+          git push
+
+      - name: Concluido
+        run: echo "Publicado em https://fabriciognascimento.github.io/Squad/"
