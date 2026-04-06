@@ -7,32 +7,33 @@ permissions:
   contents: write
 
 jobs:
-  update:
+  republish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.CLAUDE }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
-      - name: Atualizar timestamp e publicar
+      - name: Trigger Pages rebuild
         run: |
           git config user.name "Claude Bot"
           git config user.email "claude-bot@motoristapx.com"
-
+          
+          # Atualiza o timestamp no rodapé para forçar rebuild
           TIMESTAMP=$(date '+%d/%m/%Y %H:%M')
-
-          sed -i "s|Sincronizado via MCP em [^<·]*|Sincronizado via MCP em ${TIMESTAMP} |g" index.html
-
+          sed -i "s|Sincronizado via MCP em [^<]*|Sincronizado via MCP em ${TIMESTAMP}|g" index.html
+          
           git add index.html
-
+          
           if git diff --staged --quiet; then
+            # Força um commit vazio para re-trigger Pages
             git commit --allow-empty -m "Squad AQ rebuild - ${TIMESTAMP} [Claude MCP]"
           else
             git commit -m "Squad AQ sync - ${TIMESTAMP} [Claude MCP]"
           fi
-
+          
           git push
-
-      - name: Concluido
-        run: echo "Publicado em https://fabriciognascimento.github.io/Squad/"
+          echo "GitHub Pages será republicado em ~30 segundos"
+          echo "URL: https://fabriciognascimento.github.io/Squad/"
