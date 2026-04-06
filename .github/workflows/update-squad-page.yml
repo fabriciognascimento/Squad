@@ -1,0 +1,46 @@
+name: Atualizar Squad Page
+
+on:
+  repository_dispatch:
+    types: [update-squad-page]
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Decodificar HTML do payload
+        run: |
+          HTML_B64="${{ github.event.client_payload.html_base64 }}"
+          if [ -z "$HTML_B64" ]; then
+            echo "ERRO: payload html_base64 vazio"
+            exit 1
+          fi
+          echo "$HTML_B64" | base64 -d > index.html
+          BYTES=$(wc -c < index.html)
+          echo "Recebidos $BYTES bytes"
+          if [ "$BYTES" -lt 5000 ]; then
+            echo "ERRO: arquivo parece invalido"
+            exit 1
+          fi
+
+      - name: Commit e push
+        run: |
+          git config user.name "Claude Bot"
+          git config user.email "claude-bot@motoristapx.com"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "Sem mudancas."
+          else
+            git commit -m "Squad AQ sync - ${{ github.event.client_payload.sync_time }} [Claude MCP]"
+            git push
+            echo "Publicado!"
+          fi
+
+      - name: URL final
+        run: echo "https://fabriciognascimento.github.io/Squad/"
